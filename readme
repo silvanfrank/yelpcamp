@@ -1,0 +1,21 @@
+
+node shell:
+
+nodemon index.js
+
+
+
+
+
+
+
+
+mongo shell:
+
+use yelp-camp
+
+show collections
+
+db.campgrounds.find()
+
+db.reviews.deleteMany({}) //delete reviews
