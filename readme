@@ -1,21 +1,17 @@
+##### linux terminal:
+mkdir newproject
+npm init -y 
+npm i express ejs mongoose bcrypt
 
-node shell:
 
+##### node shell:
 nodemon index.js
 
 
-
-
-
-
-
-
-mongo shell:
-
+##### mongo shell:
+mongo
+show dbs
 use yelp-camp
-
 show collections
-
 db.campgrounds.find()
-
 db.reviews.deleteMany({}) //delete reviews
