@@ -2,9 +2,22 @@ const mongoose = require('mongoose');
 const Review = require('./review');
 const Schema = mongoose.Schema;
 
+const ImageSchema = new Schema({
+    url: String,
+    filename: String
+});
+
+ImageSchema.virtual('thumbnail').get(function () {
+    return this.url.replace('/upload', '/upload/w_200,h_200,c_fit');
+});
+
+ImageSchema.virtual('thumbnailMedium').get(function () {
+    return this.url.replace('/upload', '/upload/w_500,c_fit');
+});
+
 const CampgroundSchema = new Schema({
     title: String,
-    image: String,
+    images: [ImageSchema],
     price: Number,
     description: String,
     location: String,
@@ -21,14 +34,14 @@ const CampgroundSchema = new Schema({
 });
 
 
-CampgroundSchema.post('findOneAndDelete', async function(doc){
-    if(doc){
+CampgroundSchema.post('findOneAndDelete', async function (doc) {
+    if (doc) {
         await Review.remove({
             _id: {
                 $in: doc.reviews
             }
-        })
+        });
     }
-})
+});
 
 module.exports = mongoose.model('Campground', CampgroundSchema);
