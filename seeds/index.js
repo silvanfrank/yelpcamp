@@ -26,7 +26,7 @@ const sample = function (array) {
 
 const seedDB = async () => {
   await Campground.deleteMany({}); //delete everything in the database
-  for (let i = 0; i < 50; i++) { // loop 100 times
+  for (let i = 0; i < 300; i++) { // loop 100 times
     const random1000 = Math.floor(Math.random() * 1000); // pick random number
     const price = Math.floor(Math.random() * 20) + 10;
     const camp = new Campground({
