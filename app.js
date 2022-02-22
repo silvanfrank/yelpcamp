@@ -64,17 +64,28 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(mongoSanitize());
 
-const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!'
 
 const store = new MongoDBStore({
     url: dbUrl,
     secret,
-    touchAfter: 24 * 60 * 60
-});
+    touchAfter: 24 * 3600
+})
 
-store.on("error", function (e) {
-    console.log("SESSION STORE ERROR", e);
-});
+store.on("error", function(e){
+    console.log("SESSION STORE ERROR", e)
+})
+
+// app.use(
+//     session({
+//         secret: 'story book',
+//         resave: false,
+//         saveUninitialized: false,
+//         store: MongoDbStore.create({
+//             mongoUrl: YourDatabaseURL
+//         })
+//     })
+// );
 
 const sessionConfig = {
     store,
@@ -84,12 +95,10 @@ const sessionConfig = {
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
-        // secure: true,
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 };
-
 app.use(session(sessionConfig));
 app.use(flash());
 // app.use(helmet());
@@ -136,7 +145,7 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error', { err });
 });
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Serving on port ${[port]}`);
 });
