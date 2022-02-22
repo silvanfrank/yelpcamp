@@ -13,6 +13,10 @@ const methodOverride = require('method-override');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const MongoDBStore = require('connect-mongo')(session);
+
 
 
 // const Joi = require('joi');
@@ -25,8 +29,12 @@ const User = require('./models/user');
 const usersRoutes = require('./routes/users');
 const campgroundsRoutes = require('./routes/campgrounds');
 const reviewsRoutes = require('./routes/reviews');
+const MongoStore = require('connect-mongo');
 
-mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
+
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/yelp-camp';
+
+mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
@@ -53,11 +61,36 @@ app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({ extended: true })); //req body is not being parsed without this line
 app.use(methodOverride('_method'));
-
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(mongoSanitize());
+
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!'
+
+const store = new MongoDBStore({
+    url: dbUrl,
+    secret,
+    touchAfter: 24 * 3600
+})
+
+store.on("error", function(e){
+    console.log("SESSION STORE ERROR", e)
+})
+
+// app.use(
+//     session({
+//         secret: 'story book',
+//         resave: false,
+//         saveUninitialized: false,
+//         store: MongoDbStore.create({
+//             mongoUrl: YourDatabaseURL
+//         })
+//     })
+// );
 
 const sessionConfig = {
-    secret: 'thisshouldbeabettersecret!',
+    store,
+    name: 'session',
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -68,6 +101,8 @@ const sessionConfig = {
 };
 app.use(session(sessionConfig));
 app.use(flash());
+// app.use(helmet());
+
 
 app.use(passport.initialize());
 app.use(passport.session());
