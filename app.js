@@ -64,7 +64,7 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(mongoSanitize());
 
-const secret = process.env.SECRET || 'thisshouldbeabettersecret!'
+const secret = 'thisshouldbeabettersecret!';
 
 const store = new MongoDBStore({
     url: dbUrl,
@@ -75,17 +75,6 @@ const store = new MongoDBStore({
 store.on("error", function(e){
     console.log("SESSION STORE ERROR", e)
 })
-
-// app.use(
-//     session({
-//         secret: 'story book',
-//         resave: false,
-//         saveUninitialized: false,
-//         store: MongoDbStore.create({
-//             mongoUrl: YourDatabaseURL
-//         })
-//     })
-// );
 
 const sessionConfig = {
     store,
